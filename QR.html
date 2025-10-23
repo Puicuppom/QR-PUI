@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR รับเงิน</title>
+    <!-- Google Fonts for a modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2; /* Blue theme */
+            --background-color: #f7f9fc;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --light-text-color: #777777;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .payment-card {
+            background-color: var(--card-background);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 40px;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            transition: all 0.3s ease;
+        }
+
+        .card-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: var(--text-color);
+        }
+
+        .card-header p {
+            font-size: 16px;
+            color: var(--light-text-color);
+            margin: 0 0 30px 0;
+        }
+
+        .dropdown-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .bank-select {
+            appearance: none;
+            background-color: #f0f4f8;
+            border: 2px solid #e1e8f0;
+            border-radius: 12px;
+            padding: 15px 40px 15px 20px;
+            font-size: 18px;
+            font-family: 'Sarabun', sans-serif;
+            color: var(--text-color);
+            width: 100%;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .bank-select:hover {
+            border-color: var(--primary-color);
+        }
+
+        .bank-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+        }
+        
+        .dropdown-container::after {
+            content: '▼';
+            font-size: 12px;
+            color: var(--light-text-color);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .qr-display {
+            margin-top: 20px;
+            min-height: 320px; /* Added to prevent layout shift */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .qr-code {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .qr-code.active {
+            display: flex;
+        }
+        
+        /* --- CSS ที่แก้ไข --- */
+        .qr-code img {
+            width: 100%;
+            max-width: 280px;
+            height: auto;
+            border-radius: 0; /* ไม่มีมุมโค้ง */
+            border: none; /* ไม่มีเส้นขอบ */
+            margin-bottom: 20px;
+        }
+        /* -------------------- */
+
+        .qr-code .bank-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        
+        .qr-code .account-info {
+            font-size: 14px;
+            color: var(--light-text-color);
+            margin-top: 5px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="payment-card">
+        <div class="card-header">
+            <h1>QR รับเงิน</h1>
+            <p>กรุณาเลือกบัญชีธนาคารที่ต้องการ</p>
+        </div>
+
+        <div class="dropdown-container">
+            <!-- --- HTML ที่แก้ไข (สังเกต value) --- -->
+            <select id="bankSelector" class="bank-select">
+                <option value="">-- เลือกธนาคาร --</option>
+                <option value="kbank">ธนาคารกสิกรไทย</option>
+                <option value="make">ธนาคาร Make by Kbank</option>
+                <option value="ttb">ธนาคาร TTB</option>
+            </select>
+        </div>
+
+        <div id="qrDisplay" class="qr-display">
+            <!-- --- HTML ที่แก้ไข (สังเกต id) --- -->
+
+            <!-- บัญชีที่ 1: กสิกรไทย -->
+            <div id="kbank-qr" class="qr-code">
+                <img src="images/qr-kbank.png" alt="QR Code ธนาคารกสิกรไทย">
+                <p class="bank-name">ธนาคารกสิกรไทย</p>
+                <p class="account-info">ชื่อบัญชี: นายวนัส ฉัตรชฎานุกูล</p>
+            </div>
+
+            <!-- บัญชีที่ 2: Make by Kbank -->
+            <div id="make-qr" class="qr-code">
+                <img src="images/qr-make.png" alt="QR Code ธนาคาร Make by Kbank">
+                <p class="bank-name">Make by Kbank</p>
+                <p class="account-info">ชื่อบัญชี: นายวนัส ฉัตรชฎานุกูล</p>
+            </div>
+
+            <!-- บัญชีที่ 3: TTB-->
+            <div id="ttb-qr" class="qr-code">
+                <img src="images/qr-ttb.png" alt="QR Code ธนาคาร TTB">
+                <p class="bank-name">ธนาคาร TTB</p>
+                <p class="account-info">ชื่อบัญชี: นายวนัส ฉัตรชฎานุกูล</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selector = document.getElementById('bankSelector');
+            const qrCodes = document.querySelectorAll('.qr-code');
+
+            selector.addEventListener('change', function() {
+                const selectedValue = this.value;
+                qrCodes.forEach(code => {
+                    code.classList.remove('active');
+                });
+                if (selectedValue) {
+                    const selectedQr = document.getElementById(selectedValue + '-qr');
+                    if (selectedQr) {
+                        selectedQr.classList.add('active');
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
